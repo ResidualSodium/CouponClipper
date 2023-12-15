@@ -286,7 +286,7 @@ def tooManyCoupons():
 
     text = Label(window, text="You\'ve clipped too many coupons!")
     text.pack()
-    text2 = Label(window, text="We'ere stopping here.")
+    text2 = Label(window, text="We're stopping here.")
     text2.pack()
     button = Button(window, text="Okay", command=onClick)
     button.pack()
