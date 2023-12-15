@@ -67,7 +67,7 @@ def find_Chrome_Profile_Dir(starting_directory="C:\\Users\\{user}\\AppData\\Loca
     chromeProfile = "User Data"
     # Substitute the {user} variable with the actual username
     starting_directory = starting_directory.format(user=os.getlogin())
-    # Recursively search for Chrome profile in all directories
+    # Search for Chrome profile in all directories
     for foldername, subfolders, filenames in os.walk(starting_directory):
         if chromeProfile in subfolders:
             # If Chrome profile found, return its directory
@@ -179,7 +179,7 @@ def storeSelection():
 ############~~~~~~~ Target Click on Coupons ~~~~~~~############
 
 def clickCouponsTarget():
-    print("Getting ready to click coupons.")
+    print("Getting ready to click coupons.") #used for debugging purposes
     try:
         # Scroll down to load more content
         driver.find_element(By.XPATH, "//body").send_keys(Keys.PAGE_DOWN)
@@ -191,7 +191,7 @@ def clickCouponsTarget():
         print(f"Error scrolling or finding buttons: {e}")
         return
 
-    print("Finding and clicking buttons")
+    print("Finding and clicking buttons") #used for debugging purposes
     coupon_buttons = WebDriverWait(driver, 10).until(
         EC.presence_of_all_elements_located(
             (By.XPATH, '//div[contains(@class, "styles__OfferGridContainer-sc-1vf9v7z-0 ZzYoU")]'
@@ -222,7 +222,7 @@ def clickCouponsTarget():
 def scrollTarget():
     print("Scrolling")
     driver.get("https://www.target.com/circle/offers")
-    targetSignOn()
+    targetSignOn() #Moves to TKinter window to verify sign on
     while True:
         time.sleep(0.1)
         try:
@@ -248,7 +248,7 @@ def scrollTarget():
 ############~~~~~~~ Target sign On Verification ~~~~~~~############
 def targetSignOn():
     def on_yes_click():
-        window.destroy()  # Close the window or perform other actions on "Yes" click
+        window.destroy() 
 
     def on_no_click():
         window.destroy()
@@ -303,9 +303,8 @@ def tooManyCoupons():
 def krogerWaitForSignOn():
     max_retries = 10
     current_retry = 0
-    # Navigate to the website and log in (replace with your actual login logic)
     driver.get("https://www.kroger.com")
-    time.sleep(1.5)
+    time.sleep(3)
     krogerDigitalCouponButton = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH,
                                         "//a[@class='kds-Link kds-Link--s kds-Link--implied p-8 block text-primary-inverse' and text()='Digital Coupons']")))
@@ -349,7 +348,7 @@ def krogerClickCoupons():
             print(f"Error occurred: {e}")
             breakpoint()
 
-        time.sleep(1)  # Add a small delay between clicks
+        time.sleep(.5)  # Add a small delay between clicks
 
 ############~~~~~~~ Not signed on ~~~~~~~############
 
