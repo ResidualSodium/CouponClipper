@@ -503,7 +503,7 @@ def GEFinishedCoupons():
 
     text = Label(window, text="Finished clipping. Closing your browser")
     text.pack()
-    text2 = Label(window, text="We'er stopping here.")
+    text2 = Label(window, text="We're stopping here.")
     text2.pack()
     button = Button(window, text="Okay", command=onClick)
     button.pack()
