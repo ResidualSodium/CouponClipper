@@ -1,0 +1,533 @@
+############~~~~~~~ Import Libraries ~~~~~~~############
+import os
+from selenium import webdriver
+import re
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import ElementClickInterceptedException
+import time
+import random
+import sys
+from tkinter import *
+
+
+############~~~~~~~ Global variables for pathing ~~~~~~~############
+
+global chrome_Profile_Directory
+global ProfileName
+global chrome_directory
+global modified_Chrome_Profile_Directory
+global user
+user = os.getlogin()
+print(user)
+############~~~~~~~ Lists && random settings needed ~~~~~~~############
+possibleProfileNames = ["Default"]
+possibleDirectories = ["C:\\", "D:\\", "E:\\", "F:\\"]
+
+#list of departments to be used in v1.1 or v1.2
+list_of_Departments = ['Baby', 'Baking Goods', 'Beauty', 'Beverages', 'Breakfast', 'Candy', 'Canned & Packaged',
+                       'Cleaning Products', 'Condiments & Sauces', 'Dairy', 'Deli', 'Electronics', 'Entertainment', 'Frozen',
+                       'General', 'Gift Cards', 'Hardware', 'Health', 'Health & Beauty', 'Home Decor', 'Kitchen', 'Meat & Seafood',
+                       'Natrual & Organic', 'Office School & Crafts', 'Other', 'Personal Care', 'Pet Care', 'Produce', 'Snacks']
+
+global standardTime
+global alternateTime
+global nonStandardTime
+
+standardTime = 0.2
+alternateTime = 0.5
+nonStandardTime = 1.5
+############~~~~~~~ Find Google Chrome.EXE~~~~~~~############
+
+def find_chrome_directory(starting_directories=possibleDirectories):
+    # Define the name of the Chrome executable
+    chrome_executable = "chrome.exe"  # Adjust for macOS and Linux if needed
+
+    # Recursively search for Chrome in all directories
+    for starting_directory in starting_directories:
+        for foldername, subfolders, filenames in os.walk(starting_directory):
+            if chrome_executable in filenames:
+                # Chrome executable found, return its directory
+                chrome_directory = os.path.join(foldername, chrome_executable)
+                return chrome_directory
+
+    print("Google Chrome not found.")
+    return None
+
+chrome_directory = find_chrome_directory()
+if chrome_directory:
+    print(f"The current directory of Google Chrome is: {chrome_directory}")
+
+############~~~~~~~ Find Google Chrome Profile Path ~~~~~~~############
+def find_Chrome_Profile_Dir(starting_directory="C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome"):
+    chromeProfile = "User Data"
+    # Substitute the {user} variable with the actual username
+    starting_directory = starting_directory.format(user=os.getlogin())
+    # Recursively search for Chrome profile in all directories
+    for foldername, subfolders, filenames in os.walk(starting_directory):
+        if chromeProfile in subfolders:
+            # If Chrome profile found, return its directory
+            global chrome_Profile_Directory
+            chrome_Profile_Directory = os.path.join(foldername, chromeProfile)
+            print("this is the directory: " + str(chrome_Profile_Directory))
+            return chrome_Profile_Directory
+    print("Google Chrome profile not found.")
+    return None
+
+############~~~~~~~ Find Google Chrome Profile ~~~~~~~############
+def find_Chrome_Profile():
+    global directoryLocations
+    directoryLocations = []
+    for i in possibleProfileNames:
+        for foldername, subfolders, filenames in os.walk(chrome_Profile_Directory):
+            if i in subfolders:
+                global ProfileName
+                ProfileName = i
+                print(f"Profile found: {i}")
+                directoryLocations.append(os.path.join(foldername, i))
+                pass
+    print(*directoryLocations, sep='\n')
+
+############~~~~~~~ Run the pre-configs ~~~~~~~############
+
+find_Chrome_Profile_Dir()
+find_chrome_directory()
+find_Chrome_Profile()
+
+############~~~~~~~ Global variables for pathing ~~~~~~~############
+
+modified_Chrome_Profile_Directory = re.sub(r'\\', r'\\\\', chrome_Profile_Directory)
+modified_Chrome_directory = re.sub(r'\\', r'\\\\', str(chrome_directory))
+print(modified_Chrome_Profile_Directory)
+print(modified_Chrome_directory)
+
+############~~~~~~~ Start Selenium Options ~~~~~~~############
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+chrome_options.add_argument('--disable-extensions')
+chrome_options.add_argument('--disable-infobars')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument("--flag-switches-begin")
+chrome_options.add_argument("--flag-switches-end")
+chrome_options.add_argument("--origin-trial-disabled-features=WebGPU")
+chrome_options.add_experimental_option("useAutomationExtension", False)
+chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
+chrome_options.add_experimental_option("excludeSwitches",["test-type"])
+chrome_options.add_argument('--no-sandbox')
+chrome_options.binary_location = str(modified_Chrome_directory)
+userdatadir = str(modified_Chrome_Profile_Directory)
+userdatadir.format(user=os.getlogin())
+profile_directory = str(ProfileName)
+chrome_options.add_argument(f"--user-data-dir={userdatadir}")
+chrome_options.add_argument(f'--profile-directory={profile_directory}')
+#chrome_options.add_argument('--incognito')
+driver = webdriver.Chrome(options=chrome_options)
+driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~        Store Select          ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+
+def storeSelection():
+    def on_button3_click():
+        print("Clicked Target")
+        window.destroy()
+        scrollTarget()
+        # Call the targetSignOn function instead of creating a new Tk instance
+    def on_button2_click():  ###Need to fix this because it's not the correct store. Swap Kroger and Giant Eagle
+        print("Clicked Giant Eagle")
+        window.destroy()
+        GEWaitForSignOn()
+
+    def on_button1_click():
+        print("Clicked Kroger")
+        window.destroy()
+        krogerWaitForSignOn()
+
+
+    window = Tk()
+    window.title("Sign on verification")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x300")
+
+    text = Label(window, text="Select the store that you would like to clip coupons from.", font=(14))
+    text.pack()
+
+    button = Button(window, text="Kroger", height=5, width=10, command=on_button1_click)
+    button2 = Button(window, text="Giant Eagle", height=5, width=10, command=on_button2_click)
+    button3 = Button(window, text="Target", height=5, width=10, command=on_button3_click)
+    button.pack(side="top", pady=(10, 10))
+    button2.pack(side="top", pady=(10, 10))
+    button3.pack(side="top", pady=(10, 10))
+    window.mainloop()
+
+
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~        Target Start          ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+
+
+############~~~~~~~ Target Click on Coupons ~~~~~~~############
+
+def clickCouponsTarget():
+    print("Getting ready to click coupons.")
+    try:
+        # Scroll down to load more content
+        driver.find_element(By.XPATH, "//body").send_keys(Keys.PAGE_DOWN)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//button[contains(@class, "styles__StyledBaseButtonInternal") '
+                                                      'and contains(@aria-label, "Save offer")]'))
+        )
+    except Exception as e:
+        print(f"Error scrolling or finding buttons: {e}")
+        return
+
+    print("Finding and clicking buttons")
+    coupon_buttons = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located(
+            (By.XPATH, '//div[contains(@class, "styles__OfferGridContainer-sc-1vf9v7z-0 ZzYoU")]'
+                       '//button[contains(@class, "styles__StyledBaseButtonInternal") '
+                       'and contains(@aria-label, "Save offer:")]'))
+    )
+
+    for button in coupon_buttons:
+        try:
+            # Scroll to the button
+            ActionChains(driver).move_to_element(button).perform()
+            button.click()
+
+        except ElementClickInterceptedException as e:
+            print("Too many coupons clipped.")
+            tooManyCoupons()
+            breakpoint()
+
+            time.sleep(0.1)
+        except StaleElementReferenceException:
+            print("Stale element reference. Retrying...")
+            continue
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+############~~~~~~~ Target Scrolling ~~~~~~~############
+def scrollTarget():
+    print("Scrolling")
+    driver.get("https://www.target.com/circle/offers")
+    targetSignOn()
+    while True:
+        time.sleep(0.1)
+        try:
+            load_more_button = WebDriverWait(driver, 2).until(
+                EC.element_to_be_clickable((By.XPATH,
+                                            '//button[contains(@class, "styles__StyledBaseButtonInternal") and contains(text(), "Load more")]'))
+            )
+            load_more_button.click()
+            time.sleep(0.1)
+            new_height = driver.execute_script("return document.body.scrollHeight")
+
+        except TimeoutException:
+            # TimeoutException will be raised if the button is not present
+            print("No more 'Load more' button. Stopping scrolling.")
+            break
+
+        except Exception as e:
+            print(f"Error: {e}")
+            break  # Break out of the loop if an error occurs
+
+    clickCouponsTarget()
+
+############~~~~~~~ Target sign On Verification ~~~~~~~############
+def targetSignOn():
+    def on_yes_click():
+        window.destroy()  # Close the window or perform other actions on "Yes" click
+
+    def on_no_click():
+        window.destroy()
+        notSignedOn()
+        sys.exit(1)  # Exit the entire program on "No" click
+
+    window = Tk()
+    window.title("Sign on verification")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = Label(window, text="Are you logged into your Target account?")
+    text.pack()
+
+    button = Button(window, text="Yes", height=3, width=6, command=on_yes_click)
+    button2 = Button(window, text="No", height=3, width=6, command=on_no_click)
+    button.pack()
+    button2.pack()
+
+    window.mainloop()
+
+############~~~~~~~ Target too many coupons ~~~~~~~############
+
+def tooManyCoupons():
+    def onClick():
+        window.destroy()
+        driver.quit()
+        sys.exit(1)
+    window = Tk()
+    window.title("Too many coupons")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = Label(window, text="You\'ve clipped too many coupons!")
+    text.pack()
+    text2 = Label(window, text="We'ere stopping here.")
+    text2.pack()
+    button = Button(window, text="Okay", command=onClick)
+    button.pack()
+    window.mainloop()
+
+
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~        Kroger Start          ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+
+
+############~~~~~~~ Kroger ~~~~~~~############
+def krogerWaitForSignOn():
+    max_retries = 10
+    current_retry = 0
+    # Navigate to the website and log in (replace with your actual login logic)
+    driver.get("https://www.kroger.com")
+    time.sleep(1.5)
+    krogerDigitalCouponButton = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH,
+                                        "//a[@class='kds-Link kds-Link--s kds-Link--implied p-8 block text-primary-inverse' and text()='Digital Coupons']")))
+
+
+    krogerDigitalCouponButton.click()
+    krogerSignOn()
+    krogerScroll()
+############~~~~~~~ Kroger Scroll down the page if necessary ~~~~~~~############
+def krogerScroll():
+    time.sleep(standardTime)
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while True:
+        time.sleep(standardTime)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(alternateTime)
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            krogerClickCoupons()
+        last_height = new_height
+
+############~~~~~~~ Kroger Click all coupons found ~~~~~~~############
+
+def krogerClickCoupons():
+    time.sleep(alternateTime)
+    buttons = driver.find_elements(By.XPATH, '//button[starts-with(@data-testid, "CouponActionButton-")]')
+    for button in buttons:
+        ActionChains(driver).move_to_element(button).perform()
+        button.click()
+        krogerTooManyCoupons = None
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="ButtonFeedbackErrorMessage"]')))
+
+            # Find the element after waiting
+            krogerTooManyCoupons = driver.find_element(By.CSS_SELECTOR, '[data-testid="ButtonFeedbackErrorMessage"]')
+            print("Maximum coupons clipped message detected.")
+            if krogerTooManyCoupons:
+                tooManyCoupons()
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            breakpoint()
+
+        time.sleep(1)  # Add a small delay between clicks
+
+############~~~~~~~ Not signed on ~~~~~~~############
+
+def notSignedOn():
+    print("notSignedOn Kroger")
+    def onOkayClick():
+        window.destroy()
+        driver.quit()
+        sys.exit(1)
+    window = Tk()
+    window.title("Too many coupons")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = Label(window, text="You need to sign on before we can clip coupons.")
+    text2 = Label(window, text="Please sign into your account, close the browser, then run the the program again.")
+    text.pack()
+    button = Button(window, text="Okay", command=onOkayClick)
+    button.pack()
+    window.mainloop()
+
+############~~~~~~~ Kroger sign on check ~~~~~~~############
+
+def krogerSignOn():
+    def on_yes_click():
+        window.destroy()  # Close the window or perform other actions on "Yes" click
+
+    def on_no_click():
+        window.destroy()
+        notSignedOn()
+
+    window = Tk()
+    window.title("Sign on verification")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = Label(window, text="Are you logged into your Kroger account?")
+    text.pack()
+    text2 = Label(window, text="If you are not, please sign in and click \"Yes\"")
+    text2.pack()
+
+    button = Button(window, text="Yes", height=3, width=6, command=on_yes_click)
+    button2 = Button(window, text="No", height=3, width=6, command=on_no_click)
+    button.pack()
+    button2.pack()
+
+    window.mainloop()
+
+
+
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~     Giant Eagle Start        ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+
+############~~~~~~~ Giant Eagle sign on check ~~~~~~~############
+
+def GEWaitForSignOn():
+    driver.get('https://www.gianteagle.com/')
+    GESignOn()
+
+############~~~~~~~ Verify Signed on ~~~~~~~############
+
+def GESignOn():
+    def on_yes_click():
+        driver.get(
+            'https://www.gianteagle.com/coupons')
+        time.sleep(2)
+        window.destroy()  # Close the window or perform other actions on "Yes" click
+        GEClickCoupons()
+
+    def on_no_click():
+        window.destroy()
+        notSignedOn()
+
+    window = Tk()
+    window.title("Sign on verification")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = Label(window, text="Are you logged into your Giant Eagle account?")
+    text.pack()
+    text2 = Label(window, text="If you are not, please sign in and click \"Yes\"")
+    text2.pack()
+
+    button = Button(window, text="Yes", height=3, width=6, command=on_yes_click)
+    button2 = Button(window, text="No", height=3, width=6, command=on_no_click)
+    button.pack()
+    button2.pack()
+
+    window.mainloop()
+
+############~~~~~~~ Click Coupons ~~~~~~~############
+
+def GEClickCoupons():
+    print("Getting ready to debug coupons")
+
+    try:
+        # Wait for the page to load (adjust timeout as needed)
+        couponElement = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="CouponCatalogButton"]'))
+        )
+
+    except TimeoutException:
+        print("No coupons found")
+        GENoCouponsToClip()
+
+        # Find all "Clip Coupon" elements
+        clip_coupon_elements = driver.find_elements(By.XPATH,
+                                                    '//div[@class="sc-hygaQO GrPUA" and text()="Clip Coupon"]')
+
+        # Iterate through the found elements and move the pointer to each location
+        for clip_coupon_element in clip_coupon_elements:
+            try:
+                # Locate the element inside the loop to avoid stale element reference
+                clip_coupon_element = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, '//div[@class="sc-hygaQO GrPUA" and text()="Clip Coupon"]'))
+                )
+
+                # Move to the location of the "Clip Coupon" element
+                driver.execute_script("arguments[0].scrollIntoView();", clip_coupon_element)
+
+                # Click the "Clip Coupon" element
+                clip_coupon_element.click()
+
+                # Optionally, you can add a delay or other actions after each move
+                time.sleep(alternateTime)
+
+            except TimeoutException as e:
+                # Handle exceptions if needed
+                print(f"Error clicking Clip Coupon element: {str(e)}")
+                print("No coupons to clip")
+        GEFinishedCoupons()
+    except Exception as e:
+        # Handle exceptions if the initial element is not found
+        print(f"Error finding initial coupon element: {str(e)}")
+
+
+def GEFinishedCoupons():
+    def onClick():
+        window.destroy()
+        driver.quit()
+        sys.exit(1)
+    window = Tk()
+    window.title("Too many coupons")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = Label(window, text="Finished clipping. Closing your browser")
+    text.pack()
+    text2 = Label(window, text="We'er stopping here.")
+    text2.pack()
+    button = Button(window, text="Okay", command=onClick)
+    button.pack()
+    window.mainloop()
+
+def GENoCouponsToClip():
+    def onClick():
+        window.destroy()
+        driver.quit()
+        sys.exit(1)
+
+    window = Tk()
+    window.title("Too many coupons")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = Label(window, text="Looks like we didn't have any coupons to clip.")
+    text.pack()
+    text2 = Label(window, text="We'er stopping here.")
+    text2.pack()
+    button = Button(window, text="Okay", command=onClick)
+    button.pack()
+    window.mainloop()
+
+storeSelection()
