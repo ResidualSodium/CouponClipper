@@ -456,16 +456,11 @@ def click_department_selections():
                 selection = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.XPATH,
                                                 f"//span[@class='kds-Text--m truncate' and text()='{i}']")))
-                print(f"Found element for {i}")
 
                 time.sleep(alternate_time)
-
-                # Scroll to the element using JavaScript
                 ActionChains(driver).move_to_element(selection)
-                print(f"Scrolled to element for {i}")
                 time.sleep(nonStandard_time)
                 selection.click()
-                print(f"Clicked element for {i}")
             except TimeoutException as e:
                 print(f"We couldn't find that department. Coupons may not exist for it. {e}")
     except Exception as e:
