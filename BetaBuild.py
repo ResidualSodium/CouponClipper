@@ -443,6 +443,7 @@ def kroger_select_departments():
     print(selected_departments)
     if len(selected_departments) == 0:
         print("Nothing selected")
+        kroger_scroll()
     else:
         click_department_selections()
 
