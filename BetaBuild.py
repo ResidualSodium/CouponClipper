@@ -10,7 +10,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 import time
-import random
 import sys
 from tkinter import *
 import tkinter as tk
