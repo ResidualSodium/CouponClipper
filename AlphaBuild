@@ -14,36 +14,27 @@ import random
 import sys
 from tkinter import *
 
-
 ############~~~~~~~ Global variables for pathing ~~~~~~~############
-
-global chrome_Profile_Directory
-global ProfileName
-global chrome_directory
-global modified_Chrome_Profile_Directory
-global user
 user = os.getlogin()
 print(user)
+
 ############~~~~~~~ Lists && random settings needed ~~~~~~~############
-possibleProfileNames = ["Default"]
-possibleDirectories = ["C:\\", "D:\\", "E:\\", "F:\\"]
+
+possible_profile_names = ["Profile 1"]
+possible_directories = ["C:\\", "D:\\", "E:\\", "F:\\"]
 
 #list of departments to be used in v1.1 or v1.2
-list_of_Departments = ['Baby', 'Baking Goods', 'Beauty', 'Beverages', 'Breakfast', 'Candy', 'Canned & Packaged',
+list_of_departments = ['Baby', 'Baking Goods', 'Beauty', 'Beverages', 'Breakfast', 'Candy', 'Canned & Packaged',
                        'Cleaning Products', 'Condiments & Sauces', 'Dairy', 'Deli', 'Electronics', 'Entertainment', 'Frozen',
                        'General', 'Gift Cards', 'Hardware', 'Health', 'Health & Beauty', 'Home Decor', 'Kitchen', 'Meat & Seafood',
                        'Natrual & Organic', 'Office School & Crafts', 'Other', 'Personal Care', 'Pet Care', 'Produce', 'Snacks']
 
-global standardTime
-global alternateTime
-global nonStandardTime
-
-standardTime = 0.2
-alternateTime = 0.5
-nonStandardTime = 1.5
+standard_time = 0.2
+alternate_time = 0.5
+nonStandard_time = 1.5
 ############~~~~~~~ Find Google Chrome.EXE~~~~~~~############
 
-def find_chrome_directory(starting_directories=possibleDirectories):
+def find_chrome_directory(starting_directories=possible_directories):
     # Define the name of the Chrome executable
     chrome_executable = "chrome.exe"  # Adjust for macOS and Linux if needed
 
@@ -63,47 +54,47 @@ if chrome_directory:
     print(f"The current directory of Google Chrome is: {chrome_directory}")
 
 ############~~~~~~~ Find Google Chrome Profile Path ~~~~~~~############
-def find_Chrome_Profile_Dir(starting_directory="C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome"):
-    chromeProfile = "User Data"
+def find_chrome_profile_dir(starting_directory="C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome"):
+    chrome_profile = "User Data"
     # Substitute the {user} variable with the actual username
     starting_directory = starting_directory.format(user=os.getlogin())
     # Search for Chrome profile in all directories
-    for foldername, subfolders, filenames in os.walk(starting_directory):
-        if chromeProfile in subfolders:
+    for folder_name, sub_folders, fil_enames in os.walk(starting_directory):
+        if chrome_profile in sub_folders:
             # If Chrome profile found, return its directory
-            global chrome_Profile_Directory
-            chrome_Profile_Directory = os.path.join(foldername, chromeProfile)
-            print("this is the directory: " + str(chrome_Profile_Directory))
-            return chrome_Profile_Directory
+            global chrome_profile_directory
+            chrome_profile_directory = os.path.join(folder_name, chrome_profile)
+            print("this is the directory: " + str(chrome_profile_directory))
+            return chrome_profile_directory
     print("Google Chrome profile not found.")
     return None
 
 ############~~~~~~~ Find Google Chrome Profile ~~~~~~~############
-def find_Chrome_Profile():
-    global directoryLocations
-    directoryLocations = []
-    for i in possibleProfileNames:
-        for foldername, subfolders, filenames in os.walk(chrome_Profile_Directory):
-            if i in subfolders:
-                global ProfileName
-                ProfileName = i
+def find_chrome_profile():
+    global directory_locations
+    directory_locations = []
+    for i in possible_profile_names:
+        for folder_name, sub_folders, file_names in os.walk(chrome_profile_directory):
+            if i in sub_folders:
+                global profile_name
+                profile_name = i
                 print(f"Profile found: {i}")
-                directoryLocations.append(os.path.join(foldername, i))
+                directory_locations.append(os.path.join(folder_name, i))
                 pass
-    print(*directoryLocations, sep='\n')
+    print(*directory_locations, sep='\n')
 
 ############~~~~~~~ Run the pre-configs ~~~~~~~############
 
-find_Chrome_Profile_Dir()
+find_chrome_profile_dir()
 find_chrome_directory()
-find_Chrome_Profile()
+find_chrome_profile()
 
 ############~~~~~~~ Global variables for pathing ~~~~~~~############
 
-modified_Chrome_Profile_Directory = re.sub(r'\\', r'\\\\', chrome_Profile_Directory)
-modified_Chrome_directory = re.sub(r'\\', r'\\\\', str(chrome_directory))
-print(modified_Chrome_Profile_Directory)
-print(modified_Chrome_directory)
+modified_chrome_profile_directory = re.sub(r'\\', r'\\\\', chrome_profile_directory)
+modified_chrome_directory = re.sub(r'\\', r'\\\\', str(chrome_directory))
+print(modified_chrome_profile_directory)
+print(modified_chrome_directory)
 
 ############~~~~~~~ Start Selenium Options ~~~~~~~############
 
@@ -121,10 +112,10 @@ chrome_options.add_experimental_option("useAutomationExtension", False)
 chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
 chrome_options.add_experimental_option("excludeSwitches",["test-type"])
 chrome_options.add_argument('--no-sandbox')
-chrome_options.binary_location = str(modified_Chrome_directory)
-userdatadir = str(modified_Chrome_Profile_Directory)
+chrome_options.binary_location = str(modified_chrome_directory)
+userdatadir = str(modified_chrome_profile_directory)
 userdatadir.format(user=os.getlogin())
-profile_directory = str(ProfileName)
+profile_directory = str(profile_name)
 chrome_options.add_argument(f"--user-data-dir={userdatadir}")
 chrome_options.add_argument(f'--profile-directory={profile_directory}')
 #chrome_options.add_argument('--incognito')
@@ -135,21 +126,21 @@ driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () =>
 ############~~~~~~~                              ~~~~~~~############
 ############~~~~~~~                              ~~~~~~~############
 
-def storeSelection():
+def store_selection():
     def on_button3_click():
         print("Clicked Target")
         window.destroy()
-        scrollTarget()
+        scroll_target()
         # Call the targetSignOn function instead of creating a new Tk instance
     def on_button2_click():  ###Need to fix this because it's not the correct store. Swap Kroger and Giant Eagle
         print("Clicked Giant Eagle")
         window.destroy()
-        GEWaitForSignOn()
+        GE_wait_for_sign_on()
 
     def on_button1_click():
         print("Clicked Kroger")
         window.destroy()
-        krogerWaitForSignOn()
+        kroger_wait_for_sign_on()
 
 
     window = Tk()
@@ -178,7 +169,7 @@ def storeSelection():
 
 ############~~~~~~~ Target Click on Coupons ~~~~~~~############
 
-def clickCouponsTarget():
+def click_coupons_target():
     print("Getting ready to click coupons.") #used for debugging purposes
     try:
         # Scroll down to load more content
@@ -207,7 +198,7 @@ def clickCouponsTarget():
 
         except ElementClickInterceptedException as e:
             print("Too many coupons clipped.")
-            tooManyCoupons()
+            too_many_coupons()
             breakpoint()
 
             time.sleep(0.1)
@@ -219,10 +210,10 @@ def clickCouponsTarget():
 
 
 ############~~~~~~~ Target Scrolling ~~~~~~~############
-def scrollTarget():
+def scroll_target():
     print("Scrolling")
     driver.get("https://www.target.com/circle/offers")
-    targetSignOn() #Moves to TKinter window to verify sign on
+    target_sign_on() #Moves to TKinter window to verify sign on
     while True:
         time.sleep(0.1)
         try:
@@ -243,16 +234,16 @@ def scrollTarget():
             print(f"Error: {e}")
             break  # Break out of the loop if an error occurs
 
-    clickCouponsTarget()
+    click_coupons_target()
 
 ############~~~~~~~ Target sign On Verification ~~~~~~~############
-def targetSignOn():
+def target_sign_on():
     def on_yes_click():
-        window.destroy() 
+        window.destroy()
 
     def on_no_click():
         window.destroy()
-        notSignedOn()
+        not_signed_on()
         sys.exit(1)  # Exit the entire program on "No" click
 
     window = Tk()
@@ -273,11 +264,14 @@ def targetSignOn():
 
 ############~~~~~~~ Target too many coupons ~~~~~~~############
 
-def tooManyCoupons():
-    def onClick():
+def too_many_coupons():
+    def on_click():
         window.destroy()
         driver.quit()
         sys.exit(1)
+    def more_clipping():
+        window.destroy()
+        store_selection()
     window = Tk()
     window.title("Too many coupons")
     window.minsize(400, 200)
@@ -288,8 +282,12 @@ def tooManyCoupons():
     text.pack()
     text2 = Label(window, text="We're stopping here.")
     text2.pack()
-    button = Button(window, text="Okay", command=onClick)
+    button = Button(window, text="Okay", command=on_click)
     button.pack()
+    text3 = Label(window, text="Did you want to clip coupons from another site?")
+    text3.pack()
+    button2 = Button(window, text="Let\'s clip more!", command=more_clipping)
+    button2.pack()
     window.mainloop()
 
 
@@ -300,61 +298,60 @@ def tooManyCoupons():
 
 
 ############~~~~~~~ Kroger ~~~~~~~############
-def krogerWaitForSignOn():
+def kroger_wait_for_sign_on():
     max_retries = 10
     current_retry = 0
     driver.get("https://www.kroger.com")
     time.sleep(3)
-    krogerDigitalCouponButton = WebDriverWait(driver, 10).until(
+    kroger_digital_coupon_button = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH,
                                         "//a[@class='kds-Link kds-Link--s kds-Link--implied p-8 block text-primary-inverse' and text()='Digital Coupons']")))
 
 
-    krogerDigitalCouponButton.click()
-    krogerSignOn()
-    krogerScroll()
+    kroger_digital_coupon_button.click()
+    kroger_sign_on()
+    kroger_scroll()
 ############~~~~~~~ Kroger Scroll down the page if necessary ~~~~~~~############
-def krogerScroll():
-    time.sleep(standardTime)
+def kroger_scroll():
+    time.sleep(standard_time)
     last_height = driver.execute_script("return document.body.scrollHeight")
     while True:
-        time.sleep(standardTime)
+        time.sleep(standard_time)
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(alternateTime)
+        time.sleep(alternate_time)
         new_height = driver.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
-            krogerClickCoupons()
+            kroger_click_coupons()
         last_height = new_height
 
 ############~~~~~~~ Kroger Click all coupons found ~~~~~~~############
 
-def krogerClickCoupons():
-    time.sleep(alternateTime)
+def kroger_click_coupons():
+    time.sleep(alternate_time)
     buttons = driver.find_elements(By.XPATH, '//button[starts-with(@data-testid, "CouponActionButton-")]')
     for button in buttons:
         ActionChains(driver).move_to_element(button).perform()
         button.click()
-        krogerTooManyCoupons = None
+        kroger_too_many_coupons = None
         try:
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="ButtonFeedbackErrorMessage"]')))
 
             # Find the element after waiting
-            krogerTooManyCoupons = driver.find_element(By.CSS_SELECTOR, '[data-testid="ButtonFeedbackErrorMessage"]')
+            kroger_too_many_coupons = driver.find_element(By.CSS_SELECTOR, '[data-testid="ButtonFeedbackErrorMessage"]')
             print("Maximum coupons clipped message detected.")
-            if krogerTooManyCoupons:
-                tooManyCoupons()
+            if kroger_too_many_coupons:
+                too_many_coupons()
         except Exception as e:
             print(f"Error occurred: {e}")
-            breakpoint()
 
-        time.sleep(.5)  # Add a small delay between clicks
+        time.sleep(alternate_time)  # Add a small delay between clicks
 
 ############~~~~~~~ Not signed on ~~~~~~~############
 
-def notSignedOn():
+def not_signed_on():
     print("notSignedOn Kroger")
-    def onOkayClick():
+    def on_okay_click():
         window.destroy()
         driver.quit()
         sys.exit(1)
@@ -367,19 +364,19 @@ def notSignedOn():
     text = Label(window, text="You need to sign on before we can clip coupons.")
     text2 = Label(window, text="Please sign into your account, close the browser, then run the the program again.")
     text.pack()
-    button = Button(window, text="Okay", command=onOkayClick)
+    button = Button(window, text="Okay", command=on_okay_click)
     button.pack()
     window.mainloop()
 
 ############~~~~~~~ Kroger sign on check ~~~~~~~############
 
-def krogerSignOn():
+def kroger_sign_on():
     def on_yes_click():
         window.destroy()  # Close the window or perform other actions on "Yes" click
 
     def on_no_click():
         window.destroy()
-        notSignedOn()
+        not_signed_on()
 
     window = Tk()
     window.title("Sign on verification")
@@ -408,23 +405,23 @@ def krogerSignOn():
 
 ############~~~~~~~ Giant Eagle sign on check ~~~~~~~############
 
-def GEWaitForSignOn():
+def GE_wait_for_sign_on():
     driver.get('https://www.gianteagle.com/')
-    GESignOn()
+    GE_sign_on()
 
 ############~~~~~~~ Verify Signed on ~~~~~~~############
 
-def GESignOn():
+def GE_sign_on():
     def on_yes_click():
         driver.get(
             'https://www.gianteagle.com/coupons')
         time.sleep(2)
         window.destroy()  # Close the window or perform other actions on "Yes" click
-        GEClickCoupons()
+        GE_click_coupons()
 
     def on_no_click():
         window.destroy()
-        notSignedOn()
+        not_signed_on()
 
     window = Tk()
     window.title("Sign on verification")
@@ -446,18 +443,18 @@ def GESignOn():
 
 ############~~~~~~~ Click Coupons ~~~~~~~############
 
-def GEClickCoupons():
+def GE_click_coupons():
     print("Getting ready to debug coupons")
 
     try:
         # Wait for the page to load (adjust timeout as needed)
-        couponElement = WebDriverWait(driver, 10).until(
+        coupon_element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test-id="CouponCatalogButton"]'))
         )
 
     except TimeoutException:
         print("No coupons found")
-        GENoCouponsToClip()
+        GE_no_coupons_to_clip()
 
         # Find all "Clip Coupon" elements
         clip_coupon_elements = driver.find_elements(By.XPATH,
@@ -478,23 +475,26 @@ def GEClickCoupons():
                 clip_coupon_element.click()
 
                 # Optionally, you can add a delay or other actions after each move
-                time.sleep(alternateTime)
+                time.sleep(alternate_time)
 
             except TimeoutException as e:
                 # Handle exceptions if needed
                 print(f"Error clicking Clip Coupon element: {str(e)}")
                 print("No coupons to clip")
-        GEFinishedCoupons()
+        GE_finished_coupons()
     except Exception as e:
         # Handle exceptions if the initial element is not found
         print(f"Error finding initial coupon element: {str(e)}")
 
 
-def GEFinishedCoupons():
-    def onClick():
+def GE_finished_coupons():
+    def on_click():
         window.destroy()
         driver.quit()
         sys.exit(1)
+    def more_clipping():
+        window.destroy()
+        store_selection()
     window = Tk()
     window.title("Too many coupons")
     window.minsize(400, 200)
@@ -505,15 +505,22 @@ def GEFinishedCoupons():
     text.pack()
     text2 = Label(window, text="We're stopping here.")
     text2.pack()
-    button = Button(window, text="Okay", command=onClick)
+    button = Button(window, text="Okay", command=on_click)
     button.pack()
+    text3 = Label(window, text="Did you want to clip coupons from another site?")
+    text3.pack()
+    button2 = Button(window, text="Let\'s clip more!", command=more_clipping)
+    button2.pack()
     window.mainloop()
 
-def GENoCouponsToClip():
-    def onClick():
+def GE_no_coupons_to_clip():
+    def on_click():
         window.destroy()
         driver.quit()
         sys.exit(1)
+    def more_clipping():
+        window.destroy()
+        store_selection()
 
     window = Tk()
     window.title("Too many coupons")
@@ -523,10 +530,15 @@ def GENoCouponsToClip():
 
     text = Label(window, text="Looks like we didn't have any coupons to clip.")
     text.pack()
-    text2 = Label(window, text="We'er stopping here.")
+    text2 = Label(window, text="We're stopping here.")
     text2.pack()
-    button = Button(window, text="Okay", command=onClick)
+    button = Button(window, text="Okay", command=on_click)
     button.pack()
+    text3 = Label(window, text="Did you want to clip coupons from another site?")
+    text3.pack()
+    button2 = Button(window, text="Let\'s clip more!", command=more_clipping)
+    button2.pack()
+
     window.mainloop()
 
-storeSelection()
+store_selection()
