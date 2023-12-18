@@ -24,3 +24,6 @@ This project is currently in Beta testing phase.
 • Addition of targeting specific departments for Kroger - **Added in "BetaBuild.py"**
 • Addition of targeting specific brands/departments for Target
 • Other websites/stores that offer digital coupons
+
+# Notice
+• This code is to be used only by individuals to save you, the user, time and effort when clipping digital coupons. This is not a tool to be distributed or used in mass for the material gain of yourself, others, or any corporation. **Again** this is a tool to be used only by you to save you the time and effort of clipping digital coupons 
