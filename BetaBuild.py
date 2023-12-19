@@ -140,12 +140,12 @@ def store_selection():
         target_sign_on()
 
     def on_button2_click():
-        print("Clicked Kroger")  # Swap Kroger and Giant Eagle
+        print("Clicked Giant Eagle")  # Swap Kroger and Giant Eagle 
         window.destroy()
         GE_wait_for_sign_on()
 
     def on_button1_click():
-        print("Clicked Giant Eagle")  # Swap Kroger and Giant Eagle
+        print("Clicked Kroger")  # Swap Kroger and Giant Eagle
         window.destroy()
         kroger_wait_for_sign_on()
 
