@@ -13,6 +13,8 @@ import time
 import sys
 from tkinter import *
 import tkinter as tk
+import customtkinter
+
 
 ############~~~~~~~ Global variables for pathing ~~~~~~~############
 user = os.getlogin()
@@ -35,6 +37,8 @@ selected_departments = []
 standard_time = 0.2
 alternate_time = 0.5
 nonStandard_time = 1.5
+customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
+customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 ############~~~~~~~ Find Google Chrome.EXE~~~~~~~############
 
 def find_chrome_directory(starting_directories=possible_directories):
@@ -133,34 +137,36 @@ def store_selection():
     def on_button3_click():
         print("Clicked Target")
         window.destroy()
-        scroll_target()
-        # Call the targetSignOn function instead of creating a new Tk instance
-    def on_button2_click():  ###Need to fix this because it's not the correct store. Swap Kroger and Giant Eagle
-        print("Clicked Giant Eagle")
+        target_sign_on()
+
+    def on_button2_click():
+        print("Clicked Kroger")  # Swap Kroger and Giant Eagle
         window.destroy()
         GE_wait_for_sign_on()
 
     def on_button1_click():
-        print("Clicked Kroger")
+        print("Clicked Giant Eagle")  # Swap Kroger and Giant Eagle
         window.destroy()
         kroger_wait_for_sign_on()
 
-
-    window = Tk()
+    customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
+    customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
+    window = customtkinter.CTk()
+    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14,)
     window.title("Sign on verification")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x300")
 
-    text = Label(window, text="Select the store that you would like to clip coupons from.", font=(14))
+    text = customtkinter.CTkLabel(master=window, text="Select the store that you would like to clip coupons from.", font=custom_font)
     text.pack()
 
-    button = Button(window, text="Kroger", height=5, width=10, command=on_button1_click)
-    button2 = Button(window, text="Giant Eagle", height=5, width=10, command=on_button2_click)
-    button3 = Button(window, text="Target", height=5, width=10, command=on_button3_click)
-    button.pack(side="top", pady=(10, 10))
-    button2.pack(side="top", pady=(10, 10))
-    button3.pack(side="top", pady=(10, 10))
+    button = customtkinter.CTkButton(master=window, text="Kroger", command=on_button1_click)
+    button2 = customtkinter.CTkButton(master=window, text="Giant Eagle", command=on_button2_click)
+    button3 = customtkinter.CTkButton(master=window, text="Target",  command=on_button3_click)
+    button.place(relx=0.5, rely=0.4, anchor=CENTER)
+    button2.place(relx=0.5, rely=0.5, anchor=CENTER)
+    button3.place(relx=0.5, rely=0.6, anchor=CENTER)
     window.mainloop()
 
 
@@ -249,17 +255,17 @@ def target_sign_on():
         not_signed_on()
         sys.exit(1)  # Exit the entire program on "No" click
 
-    window = Tk()
+    window = customtkinter.CTk()
     window.title("Sign on verification")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x200")
 
-    text = Label(window, text="Are you logged into your Target account?")
+    text = customtkinter.CTkLabel(master=window, text="Are you logged into your Target account?")
     text.pack()
 
-    button = Button(window, text="Yes", height=3, width=6, command=on_yes_click)
-    button2 = Button(window, text="No", height=3, width=6, command=on_no_click)
+    button = customtkinter.CTkButton(master=window, text="Yes", height=3, width=6, command=on_yes_click)
+    button2 = customtkinter.CTkButton(master=window, text="No", height=3, width=6, command=on_no_click)
     button.pack()
     button2.pack()
 
@@ -275,21 +281,21 @@ def too_many_coupons():
     def more_clipping():
         window.destroy()
         store_selection()
-    window = Tk()
+    window = customtkinter.CTk()
     window.title("Too many coupons")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x200")
 
-    text = Label(window, text="You\'ve clipped too many coupons!")
+    text = customtkinter.CTkLabel(master=window, text="You\'ve clipped too many coupons!")
     text.pack()
-    text2 = Label(window, text="We're stopping here.")
+    text2 = customtkinter.CTkLabel(master=window, text="We're stopping here.")
     text2.pack()
-    button = Button(window, text="Okay", command=on_click)
+    button = customtkinter.CTkButton(master=window, text="Okay", command=on_click)
     button.pack()
-    text3 = Label(window, text="Did you want to clip coupons from another site?")
+    text3 = customtkinter.CTkLabel(master=window, text="Did you want to clip coupons from another site?")
     text3.pack()
-    button2 = Button(window, text="Let\'s clip more!", command=more_clipping)
+    button2 = customtkinter.CTkButton(master=window, text="Let\'s clip more!", command=more_clipping)
     button2.pack()
     window.mainloop()
 
@@ -358,16 +364,16 @@ def not_signed_on():
         window.destroy()
         driver.quit()
         sys.exit(1)
-    window = Tk()
+    window = customtkinter.CTk()
     window.title("Too many coupons")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x200")
 
-    text = Label(window, text="You need to sign on before we can clip coupons.")
-    text2 = Label(window, text="Please sign into your account, close the browser, then run the the program again.")
+    text = customtkinter.CTkLabel(master=window, text="You need to sign on before we can clip coupons.")
+    text2 = customtkinter.CTkLabel(master=window, text="Please sign into your account, close the browser, then run the the program again.")
     text.pack()
-    button = Button(window, text="Okay", command=on_okay_click)
+    button = customtkinter.CTkButton(master=window, text="Okay", command=on_okay_click)
     button.pack()
     window.mainloop()
 
@@ -377,25 +383,25 @@ def kroger_sign_on():
     def on_yes_click():
         window.destroy()
         #kroger_scroll()
-        kroger_department_selection()
+        kroger_select_departments()
 
     def on_no_click():
         window.destroy()
         not_signed_on()
 
-    window = Tk()
+    window = customtkinter.CTk()
     window.title("Sign on verification")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x200")
 
-    text = Label(window, text="Are you logged into your Kroger account?")
+    text = customtkinter.CTkLabel(master=window, text="Are you logged into your Kroger account?")
     text.pack()
-    text2 = Label(window, text="If you are not, please sign in and click \"Yes\"")
+    text2 = customtkinter.CTkLabel(master=window, text="If you are not, please sign in and click \"Yes\"")
     text2.pack()
 
-    button = Button(window, text="Yes", height=3, width=6, command=on_yes_click)
-    button2 = Button(window, text="No", height=3, width=6, command=on_no_click)
+    button = customtkinter.CTkButton(master=window, text="Yes", height=3, width=6, command=on_yes_click)
+    button2 = customtkinter.CTkButton(master=window, text="No", height=3, width=6, command=on_no_click)
     button.pack()
     button2.pack()
 
@@ -403,42 +409,44 @@ def kroger_sign_on():
 
 ############~~~~~~~ Kroger select departments ~~~~~~~############
 
-def kroger_department_selection():
-    def on_checkbox_click():
-        global selected_departments
-        selected_departments = [list_of_departments[i] for i, value in enumerate(checkbox_vars) if value.get()]
+def on_checkbox_click():
+    global selected_departments
+    selected_departments = [list_of_departments[i] for i, value in enumerate(checkbox_vars) if value.get()]
 
-    window = tk.Tk()
+def kroger_select_departments():
+    print("Selected departments:", selected_departments)
+    # Add your logic here for handling the selected departments
+    window = customtkinter.CTk()
+    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14,)
     window.title("Select Departments")
-    window.minsize(800, 800)
+    window.minsize(500, 500)
     window.maxsize(1000, 1000)
-    window.geometry("800x800")
-
-    checkbox_vars = [tk.BooleanVar() for _ in list_of_departments]
+    window.geometry("550x550")
+    global checkbox_vars
+    checkbox_vars = [customtkinter.BooleanVar() for _ in list_of_departments]
     checkboxes_per_row = 3
 
     label_row = 0
     label_column = 0
     label_columnspan = checkboxes_per_row
-    label = Label(window, text="If you would ilke to select specific departments, please select them below. \n Otherwise click \"Confirm department selection.\"")
+    label = customtkinter.CTkLabel(master=window,
+                  text="If you would like to select specific departments, please select them below.\nOtherwise click \"Confirm department selection.\"", font=custom_font)
     label.grid(row=label_row, column=label_column, columnspan=label_columnspan, pady=10)
-
     for index, department in enumerate(list_of_departments):
-        checkbox = tk.Checkbutton(window, text=department, variable=checkbox_vars[index], command=on_checkbox_click)
+        checkbox = customtkinter.CTkCheckBox(master=window, text=department, variable=checkbox_vars[index], command=on_checkbox_click)
         row = (index // checkboxes_per_row) + 1  # Start from row 1 for checkboxes
-        checkbox.grid(row=row, column=index % checkboxes_per_row, sticky=tk.W, padx=5, pady=5)
+        checkbox.grid(row=row, column=index % checkboxes_per_row, sticky=W, padx=5, pady=5)
 
     button_row = (len(list_of_departments) - 1) // checkboxes_per_row + 2
     button_column = 0
     button_columnspan = checkboxes_per_row
-    button = Button(window, text="Confirm department selection.",
-                    command=lambda: [window.destroy(), kroger_select_departments()])
+    button = customtkinter.CTkButton(window, text="Confirm department selection.", command=lambda: [window.destroy(), kroger_selections()])
     button.grid(row=button_row, column=button_column, columnspan=button_columnspan, pady=10)
 
     window.mainloop()
 
 ############~~~~~~~ Click selected items ~~~~~~~############
-def kroger_select_departments():
+def kroger_selections():
     print(selected_departments)
     if len(selected_departments) == 0:
         print("Nothing selected")
@@ -457,6 +465,8 @@ def click_department_selections():
                                                 f"//span[@class='kds-Text--m truncate' and text()='{i}']")))
 
                 time.sleep(alternate_time)
+
+                # Scroll to the element using JavaScript
                 ActionChains(driver).move_to_element(selection)
                 time.sleep(nonStandard_time)
                 selection.click()
@@ -493,19 +503,19 @@ def GE_sign_on():
         window.destroy()
         not_signed_on()
 
-    window = Tk()
+    window = customtkinter.CTk()
     window.title("Sign on verification")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x200")
 
-    text = Label(window, text="Are you logged into your Giant Eagle account?")
+    text = customtkinter.CTkLabel(master=window, text="Are you logged into your Giant Eagle account?")
     text.pack()
-    text2 = Label(window, text="If you are not, please sign in and click \"Yes\"")
+    text2 = customtkinter.CTkLabel(master=window, text="If you are not, please sign in and click \"Yes\"")
     text2.pack()
 
-    button = Button(window, text="Yes", height=3, width=6, command=on_yes_click)
-    button2 = Button(window, text="No", height=3, width=6, command=on_no_click)
+    button = customtkinter.CTkButton(master=window, text="Yes", height=3, width=6, command=on_yes_click)
+    button2 = customtkinter.CTkButton(master=window, text="No", height=3, width=6, command=on_no_click)
     button.pack()
     button2.pack()
 
@@ -563,21 +573,21 @@ def GE_finished_coupons():
     def more_clipping():
         window.destroy()
         store_selection()
-    window = Tk()
+    window = customtkinter.CTk()
     window.title("Too many coupons")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x200")
 
-    text = Label(window, text="Finished clipping. Closing your browser")
+    text = customtkinter.CTkLabel(master=window, text="Finished clipping. Closing your browser")
     text.pack()
-    text2 = Label(window, text="We're stopping here.")
+    text2 = customtkinter.CTkLabel(master=window, text="We're stopping here.")
     text2.pack()
-    button = Button(window, text="Okay", command=on_click)
+    button = customtkinter.CTkButton(master=window, text="Okay", command=on_click)
     button.pack()
-    text3 = Label(window, text="Did you want to clip coupons from another site?")
+    text3 = customtkinter.CTkLabel(master=window, text="Did you want to clip coupons from another site?")
     text3.pack()
-    button2 = Button(window, text="Let\'s clip more!", command=more_clipping)
+    button2 = customtkinter.CTkButton(master=window, text="Let\'s clip more!", command=more_clipping)
     button2.pack()
     window.mainloop()
 
@@ -590,21 +600,21 @@ def GE_no_coupons_to_clip():
         window.destroy()
         store_selection()
 
-    window = Tk()
+    window = customtkinter.CTk()
     window.title("Too many coupons")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x200")
 
-    text = Label(window, text="Looks like we didn't have any coupons to clip.")
+    text = customtkinter.CTkLabel(master=window, text="Looks like we didn't have any coupons to clip.")
     text.pack()
-    text2 = Label(window, text="We're stopping here.")
+    text2 = customtkinter.CTkLabel(master=window, text="We're stopping here.")
     text2.pack()
-    button = Button(window, text="Okay", command=on_click)
+    button = customtkinter.CTkButton(master=window, text="Okay", command=on_click)
     button.pack()
-    text3 = Label(window, text="Did you want to clip coupons from another site?")
+    text3 = customtkinter.CTkLabel(master=window, text="Did you want to clip coupons from another site?")
     text3.pack()
-    button2 = Button(window, text="Let\'s clip more!", command=more_clipping)
+    button2 = customtkinter.CTkButton(master=window, text="Let\'s clip more!", command=more_clipping)
     button2.pack()
 
     window.mainloop()
