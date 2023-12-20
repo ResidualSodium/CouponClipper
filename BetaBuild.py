@@ -15,17 +15,15 @@ from tkinter import *
 import tkinter as tk
 import customtkinter
 
-
 ############~~~~~~~ Global variables for pathing ~~~~~~~############
 user = os.getlogin()
-print(user)
 
 ############~~~~~~~ Lists && random settings needed ~~~~~~~############
 
 possible_profile_names = ["Default", "default"]
 possible_directories = ["C:\\", "D:\\", "E:\\", "F:\\"]
 
-#list of departments to be used in v1.1 or v1.2
+# list of departments to be used in v1.1 or v1.2
 list_of_departments = ['Adult Beverage', 'Baby', 'Bakery', 'Baking Goods', 'Beauty', 'Beverages', 'Breakfast',
                        'Candy', 'Canned & Packaged', 'Cleaning Products', 'Condiment & Sauces', 'Dairy', 'Deli',
                        'Electronics', 'Frozen', 'Garden & Patio', 'General', 'Gift Cards', 'Hardware', 'Health',
@@ -39,6 +37,8 @@ alternate_time = 0.5
 nonStandard_time = 1.5
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
+
+
 ############~~~~~~~ Find Google Chrome.EXE~~~~~~~############
 
 def find_chrome_directory(starting_directories=possible_directories):
@@ -56,9 +56,11 @@ def find_chrome_directory(starting_directories=possible_directories):
     print("Google Chrome not found.")
     return None
 
+
 chrome_directory = find_chrome_directory()
 if chrome_directory:
     print(f"The current directory of Google Chrome is: {chrome_directory}")
+
 
 ############~~~~~~~ Find Google Chrome Profile Path ~~~~~~~############
 def find_chrome_profile_dir(starting_directory="C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome"):
@@ -76,6 +78,7 @@ def find_chrome_profile_dir(starting_directory="C:\\Users\\{user}\\AppData\\Loca
     print("Google Chrome profile not found.")
     return None
 
+
 ############~~~~~~~ Find Google Chrome Profile ~~~~~~~############
 def find_chrome_profile():
     global directory_locations
@@ -89,6 +92,7 @@ def find_chrome_profile():
                 directory_locations.append(os.path.join(folder_name, i))
                 pass
     print(*directory_locations, sep='\n')
+
 
 ############~~~~~~~ Run the pre-configs ~~~~~~~############
 
@@ -106,7 +110,8 @@ print(modified_chrome_directory)
 ############~~~~~~~ Start Selenium Options ~~~~~~~############
 
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+chrome_options.add_argument(
+    'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
 chrome_options.add_argument('--disable-blink-features=AutomationControlled')
 chrome_options.add_argument('--disable-extensions')
 chrome_options.add_argument('--disable-infobars')
@@ -116,8 +121,8 @@ chrome_options.add_argument("--flag-switches-begin")
 chrome_options.add_argument("--flag-switches-end")
 chrome_options.add_argument("--origin-trial-disabled-features=WebGPU")
 chrome_options.add_experimental_option("useAutomationExtension", False)
-chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
-chrome_options.add_experimental_option("excludeSwitches",["test-type"])
+chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+chrome_options.add_experimental_option("excludeSwitches", ["test-type"])
 chrome_options.add_argument('--no-sandbox')
 chrome_options.binary_location = str(modified_chrome_directory)
 userdatadir = str(modified_chrome_profile_directory)
@@ -125,48 +130,58 @@ userdatadir.format(user=os.getlogin())
 profile_directory = str(profile_name)
 chrome_options.add_argument(f"--user-data-dir={userdatadir}")
 chrome_options.add_argument(f'--profile-directory={profile_directory}')
-#chrome_options.add_argument('--incognito')
+# chrome_options.add_argument('--incognito')
 driver = webdriver.Chrome(options=chrome_options)
 driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+
+
 ############~~~~~~~                              ~~~~~~~############
 ############~~~~~~~        Store Select          ~~~~~~~############
 ############~~~~~~~                              ~~~~~~~############
 ############~~~~~~~                              ~~~~~~~############
 
 def store_selection():
+    def on_button4_click():
+        print("Clicked Ralphs")
+        window.destroy()
+        ralphs_wait_for_sign_on()
+
     def on_button3_click():
         print("Clicked Target")
         window.destroy()
-        target_sign_on()
+        scroll_target()
 
     def on_button2_click():
-        print("Clicked Giant Eagle")  # Swap Kroger and Giant Eagle 
+        print("Clicked Giant Eagle")
         window.destroy()
         GE_wait_for_sign_on()
 
     def on_button1_click():
-        print("Clicked Kroger")  # Swap Kroger and Giant Eagle
+        print("Clicked Kroger")
         window.destroy()
         kroger_wait_for_sign_on()
 
     customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
     customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
     window = customtkinter.CTk()
-    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14,)
+    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14, )
     window.title("Sign on verification")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
     window.geometry("400x300")
 
-    text = customtkinter.CTkLabel(master=window, text="Select the store that you would like to clip coupons from.", font=custom_font)
+    text = customtkinter.CTkLabel(master=window, text="Select the store that you would like to clip coupons from.",
+                                  font=custom_font)
     text.pack()
 
     button = customtkinter.CTkButton(master=window, text="Kroger", command=on_button1_click)
     button2 = customtkinter.CTkButton(master=window, text="Giant Eagle", command=on_button2_click)
-    button3 = customtkinter.CTkButton(master=window, text="Target",  command=on_button3_click)
+    button3 = customtkinter.CTkButton(master=window, text="Target", command=on_button3_click)
+    button4 = customtkinter.CTkButton(master=window, text="Ralphs", command=on_button4_click)
     button.place(relx=0.5, rely=0.4, anchor=CENTER)
     button2.place(relx=0.5, rely=0.5, anchor=CENTER)
     button3.place(relx=0.5, rely=0.6, anchor=CENTER)
+    button4.place(relx=0.5, rely=0.7, anchor=CENTER)
     window.mainloop()
 
 
@@ -179,7 +194,7 @@ def store_selection():
 ############~~~~~~~ Target Click on Coupons ~~~~~~~############
 
 def click_coupons_target():
-    print("Getting ready to click coupons.") #used for debugging purposes
+    print("Getting ready to click coupons.")  # used for debugging purposes
     try:
         # Scroll down to load more content
         driver.find_element(By.XPATH, "//body").send_keys(Keys.PAGE_DOWN)
@@ -191,7 +206,7 @@ def click_coupons_target():
         print(f"Error scrolling or finding buttons: {e}")
         return
 
-    print("Finding and clicking buttons") #used for debugging purposes
+    print("Finding and clicking buttons")  # used for debugging purposes
     coupon_buttons = WebDriverWait(driver, 10).until(
         EC.presence_of_all_elements_located(
             (By.XPATH, '//div[contains(@class, "styles__OfferGridContainer-sc-1vf9v7z-0 ZzYoU")]'
@@ -222,7 +237,7 @@ def click_coupons_target():
 def scroll_target():
     print("Scrolling")
     driver.get("https://www.target.com/circle/offers")
-    target_sign_on() #Moves to TKinter window to verify sign on
+    target_sign_on()  # Moves to TKinter window to verify sign on
     while True:
         time.sleep(0.1)
         try:
@@ -244,6 +259,7 @@ def scroll_target():
             break  # Break out of the loop if an error occurs
 
     click_coupons_target()
+
 
 ############~~~~~~~ Target sign On Verification ~~~~~~~############
 def target_sign_on():
@@ -271,6 +287,7 @@ def target_sign_on():
 
     window.mainloop()
 
+
 ############~~~~~~~ Target too many coupons ~~~~~~~############
 
 def too_many_coupons():
@@ -278,9 +295,11 @@ def too_many_coupons():
         window.destroy()
         driver.quit()
         sys.exit(1)
+
     def more_clipping():
         window.destroy()
         store_selection()
+
     window = customtkinter.CTk()
     window.title("Too many coupons")
     window.minsize(400, 200)
@@ -316,9 +335,10 @@ def kroger_wait_for_sign_on():
         EC.presence_of_element_located((By.XPATH,
                                         "//a[@class='kds-Link kds-Link--s kds-Link--implied p-8 block text-primary-inverse' and text()='Digital Coupons']")))
 
-
     kroger_digital_coupon_button.click()
     kroger_sign_on()
+
+
 ############~~~~~~~ Kroger Scroll down the page if necessary ~~~~~~~############
 def kroger_scroll():
     time.sleep(standard_time)
@@ -331,6 +351,7 @@ def kroger_scroll():
         if new_height == last_height:
             kroger_click_coupons()
         last_height = new_height
+
 
 ############~~~~~~~ Kroger Click all coupons found ~~~~~~~############
 
@@ -356,14 +377,17 @@ def kroger_click_coupons():
 
         time.sleep(alternate_time)  # Add a small delay between clicks
 
+
 ############~~~~~~~ Not signed on ~~~~~~~############
 
 def not_signed_on():
     print("notSignedOn Kroger")
+
     def on_okay_click():
         window.destroy()
         driver.quit()
         sys.exit(1)
+
     window = customtkinter.CTk()
     window.title("Too many coupons")
     window.minsize(400, 200)
@@ -371,18 +395,19 @@ def not_signed_on():
     window.geometry("400x200")
 
     text = customtkinter.CTkLabel(master=window, text="You need to sign on before we can clip coupons.")
-    text2 = customtkinter.CTkLabel(master=window, text="Please sign into your account, close the browser, then run the the program again.")
+    text2 = customtkinter.CTkLabel(master=window,
+                                   text="Please sign into your account, close the browser, then run the the program again.")
     text.pack()
     button = customtkinter.CTkButton(master=window, text="Okay", command=on_okay_click)
     button.pack()
     window.mainloop()
+
 
 ############~~~~~~~ Kroger sign on check ~~~~~~~############
 
 def kroger_sign_on():
     def on_yes_click():
         window.destroy()
-        #kroger_scroll()
         kroger_select_departments()
 
     def on_no_click():
@@ -407,17 +432,19 @@ def kroger_sign_on():
 
     window.mainloop()
 
+
 ############~~~~~~~ Kroger select departments ~~~~~~~############
 
-def on_checkbox_click():
+def kroger_on_checkbox_click():
     global selected_departments
     selected_departments = [list_of_departments[i] for i, value in enumerate(checkbox_vars) if value.get()]
+
 
 def kroger_select_departments():
     print("Selected departments:", selected_departments)
     # Add your logic here for handling the selected departments
     window = customtkinter.CTk()
-    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14,)
+    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14, )
     window.title("Select Departments")
     window.minsize(500, 500)
     window.maxsize(1000, 1000)
@@ -430,20 +457,24 @@ def kroger_select_departments():
     label_column = 0
     label_columnspan = checkboxes_per_row
     label = customtkinter.CTkLabel(master=window,
-                  text="If you would like to select specific departments, please select them below.\nOtherwise click \"Confirm department selection.\"", font=custom_font)
+                                   text="If you would like to select specific departments, please select them below.\nOtherwise click \"Confirm department selection.\"",
+                                   font=custom_font)
     label.grid(row=label_row, column=label_column, columnspan=label_columnspan, pady=10)
     for index, department in enumerate(list_of_departments):
-        checkbox = customtkinter.CTkCheckBox(master=window, text=department, variable=checkbox_vars[index], command=on_checkbox_click)
+        checkbox = customtkinter.CTkCheckBox(master=window, text=department, variable=checkbox_vars[index],
+                                             command=kroger_on_checkbox_click)
         row = (index // checkboxes_per_row) + 1  # Start from row 1 for checkboxes
         checkbox.grid(row=row, column=index % checkboxes_per_row, sticky=W, padx=5, pady=5)
 
     button_row = (len(list_of_departments) - 1) // checkboxes_per_row + 2
     button_column = 0
     button_columnspan = checkboxes_per_row
-    button = customtkinter.CTkButton(window, text="Confirm department selection.", command=lambda: [window.destroy(), kroger_selections()])
+    button = customtkinter.CTkButton(window, text="Confirm department selection.",
+                                     command=lambda: [window.destroy(), kroger_selections()])
     button.grid(row=button_row, column=button_column, columnspan=button_columnspan, pady=10)
 
     window.mainloop()
+
 
 ############~~~~~~~ Click selected items ~~~~~~~############
 def kroger_selections():
@@ -452,9 +483,10 @@ def kroger_selections():
         print("Nothing selected")
         kroger_scroll()
     else:
-        click_department_selections()
+        kroger_click_department_selections()
 
-def click_department_selections():
+
+def kroger_click_department_selections():
     print("Clicking selected departments")
     print(selected_departments)
     try:
@@ -477,7 +509,6 @@ def click_department_selections():
     kroger_scroll()
 
 
-
 ############~~~~~~~                              ~~~~~~~############
 ############~~~~~~~     Giant Eagle Start        ~~~~~~~############
 ############~~~~~~~                              ~~~~~~~############
@@ -488,6 +519,7 @@ def click_department_selections():
 def GE_wait_for_sign_on():
     driver.get('https://www.gianteagle.com/')
     GE_sign_on()
+
 
 ############~~~~~~~ Verify Signed on ~~~~~~~############
 
@@ -520,6 +552,7 @@ def GE_sign_on():
     button2.pack()
 
     window.mainloop()
+
 
 ############~~~~~~~ Click Coupons ~~~~~~~############
 
@@ -564,15 +597,16 @@ def GE_click_coupons():
     GE_finished_coupons()
 
 
-
 def GE_finished_coupons():
     def on_click():
         window.destroy()
         driver.quit()
         sys.exit(1)
+
     def more_clipping():
         window.destroy()
         store_selection()
+
     window = customtkinter.CTk()
     window.title("Too many coupons")
     window.minsize(400, 200)
@@ -591,11 +625,13 @@ def GE_finished_coupons():
     button2.pack()
     window.mainloop()
 
+
 def GE_no_coupons_to_clip():
     def on_click():
         window.destroy()
         driver.quit()
         sys.exit(1)
+
     def more_clipping():
         window.destroy()
         store_selection()
@@ -618,5 +654,194 @@ def GE_no_coupons_to_clip():
     button2.pack()
 
     window.mainloop()
+
+
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~        Ralphs Start          ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+
+
+############~~~~~~~ Ralphs ~~~~~~~############
+def ralphs_wait_for_sign_on():
+    max_retries = 10
+    current_retry = 0
+    driver.get("https://www.ralphs.com")
+    time.sleep(3)
+    ralphs_digital_coupon_button = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH,
+                                        "//a[@class='kds-Link kds-Link--s kds-Link--implied p-8 block text-neutral-most-prominent' and text()='Digital Coupons']")))
+
+    ralphs_digital_coupon_button.click()
+    ralphs_sign_on()
+
+
+############~~~~~~~ Ralphs Scroll down the page if necessary ~~~~~~~############
+def ralphs_scroll():
+    time.sleep(standard_time)
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while True:
+        time.sleep(alternate_time)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(alternate_time)
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            ralphs_click_coupons()
+        last_height = new_height
+
+
+############~~~~~~~ Ralphs Click all coupons found ~~~~~~~############
+
+def ralphs_click_coupons():
+    time.sleep(alternate_time)
+    buttons = driver.find_elements(By.XPATH, '//button[starts-with(@data-testid, "CouponActionButton-")]')
+    for button in buttons:
+        ActionChains(driver).move_to_element(button).perform()
+        button.click()
+        ralphs_too_many_coupons = None
+        try:
+            WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="ButtonFeedbackErrorMessage"]')))
+
+            # Find the element after waiting
+            ralphs_too_many_coupons = driver.find_element(By.CSS_SELECTOR, '[data-testid="ButtonFeedbackErrorMessage"]')
+            print("Maximum coupons clipped message detected.")
+            if ralphs_too_many_coupons:
+                too_many_coupons()
+                break
+        except Exception as e:
+            print(f"Error occurred: {e}")
+
+        time.sleep(alternate_time)  # Add a small delay between clicks
+
+
+############~~~~~~~ Ralphs Not signed on ~~~~~~~############
+
+def ralphs_not_signed_on():
+    print("not signed on Ralphs")
+
+    def on_okay_click():
+        window.destroy()
+        driver.quit()
+        sys.exit(1)
+
+    window = customtkinter.CTk()
+    window.title("Too many coupons")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = customtkinter.CTkLabel(master=window, text="You need to sign on before we can clip coupons.")
+    text.pack()
+    button = customtkinter.CTkButton(master=window, text="Okay", command=on_okay_click)
+    button.pack()
+    window.mainloop()
+
+
+############~~~~~~~ Ralphs sign on check ~~~~~~~############
+
+def ralphs_sign_on():
+    def on_yes_click():
+        window.destroy()
+        ralphs_select_departments()
+
+    def on_no_click():
+        window.destroy()
+        ralphs_not_signed_on()
+
+    window = customtkinter.CTk()
+    window.title("Sign on verification")
+    window.minsize(400, 200)
+    window.maxsize(1000, 1000)
+    window.geometry("400x200")
+
+    text = customtkinter.CTkLabel(master=window, text="Are you logged into your Ralphs account?")
+    text.pack()
+    text2 = customtkinter.CTkLabel(master=window, text="If you are not, please sign in and click \"Yes\"")
+    text2.pack()
+
+    button = customtkinter.CTkButton(master=window, text="Yes", height=3, width=6, command=on_yes_click)
+    button2 = customtkinter.CTkButton(master=window, text="No", height=3, width=6, command=on_no_click)
+    button.pack()
+    button2.pack()
+
+    window.mainloop()
+
+
+############~~~~~~~ Ralphs select departments ~~~~~~~############
+
+def ralphs_on_checkbox_click():
+    global selected_departments
+    selected_departments = [list_of_departments[i] for i, value in enumerate(checkbox_vars) if value.get()]
+
+
+def ralphs_select_departments():
+    print("Selected departments:", selected_departments)
+    # Add your logic here for handling the selected departments
+    window = customtkinter.CTk()
+    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14, )
+    window.title("Select Departments")
+    window.minsize(500, 500)
+    window.maxsize(1000, 1000)
+    window.geometry("550x550")
+    global checkbox_vars
+    checkbox_vars = [customtkinter.BooleanVar() for _ in list_of_departments]
+    checkboxes_per_row = 3
+
+    label_row = 0
+    label_column = 0
+    label_columnspan = checkboxes_per_row
+    label = customtkinter.CTkLabel(master=window,
+                                   text="If you would like to select specific departments, please select them below.\nOtherwise click \"Confirm department selection.\"",
+                                   font=custom_font)
+    label.grid(row=label_row, column=label_column, columnspan=label_columnspan, pady=10)
+    for index, department in enumerate(list_of_departments):
+        checkbox = customtkinter.CTkCheckBox(master=window, text=department, variable=checkbox_vars[index],
+                                             command=ralphs_on_checkbox_click)
+        row = (index // checkboxes_per_row) + 1  # Start from row 1 for checkboxes
+        checkbox.grid(row=row, column=index % checkboxes_per_row, sticky=W, padx=5, pady=5)
+
+    button_row = (len(list_of_departments) - 1) // checkboxes_per_row + 2
+    button_column = 0
+    button_columnspan = checkboxes_per_row
+    button = customtkinter.CTkButton(window, text="Confirm department selection.",
+                                     command=lambda: [window.destroy(), ralphs_selections()])
+    button.grid(row=button_row, column=button_column, columnspan=button_columnspan, pady=10)
+
+    window.mainloop()
+
+
+############~~~~~~~ Ralphs click selected items ~~~~~~~############
+def ralphs_selections():
+    print(selected_departments)
+    if len(selected_departments) == 0:
+        print("Nothing selected")
+        ralphs_scroll()
+    else:
+        ralphs_click_department_selections()
+
+
+def ralphs_click_department_selections():
+    print("Clicking selected departments")
+    print(selected_departments)
+    try:
+        for i in selected_departments:
+            try:
+                selection = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH,
+                                                f"//span[@class='kds-Text--m truncate' and text()='{i}']")))
+
+                time.sleep(alternate_time)
+
+                # Scroll to the element using JavaScript
+                ActionChains(driver).move_to_element(selection)
+                time.sleep(nonStandard_time)
+                selection.click()
+            except TimeoutException as e:
+                print(f"We couldn't find that department. Coupons may not exist for it. {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+    ralphs_scroll()
+
 
 store_selection()
