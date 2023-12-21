@@ -30,14 +30,6 @@ list_of_departments = ['Adult Beverage', 'Baby', 'Bakery', 'Baking Goods', 'Beau
                        'Health & Beauty', 'Home Decor', 'Kitchen', 'Meat & Seafood', 'Natural & Organic', 'Other',
                        'Pasta Sauces Grain', 'Personal Care', 'Pet Care', 'Produce', 'Snacks', 'Tobacco']
 
-food_for_less_list_of_departments = ['Adult Beverage', 'Baby', 'Bakery', 'Baking Goods', 'Beauty', 'Beverages',
-                                     'Breakfast', 'Candy', 'Canned & Packaged', 'Cleaning Products',
-                                     'Condiments & Sauces', 'Dairy', 'Deli', 'Electronics', 'Frozen', 'Garden & Patio',
-                                     'General', 'Gift Cards', 'Hardware', 'Health', 'Health & Beauty', 'Home Decor',
-                                     'International', 'Kitchen', 'Meat & Seafood', 'Natural & Organic', 'Other',
-                                     'Pasta Sauces Grain', 'Personal Care', 'Pet Care', 'Produce', 'Snacks', 'Tobacco',
-                                     'Travel & Luggage']
-
 global selected_departments
 selected_departments = []
 
@@ -152,62 +144,69 @@ driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () =>
 
 def store_selection():
 
-    def on_button6_click():
-        window.destroy()
-        wait_for_sign_on("https://www.food4less.com/savings/cl/coupons/", "Food 4 Less")
+    stores = [
+        ("Kroger", "https://www.kroger.com/savings/cl/coupons"),
+        ("Giant Eagle", None),  # Add the appropriate URL or function
+        ("Target", None),       # Add the appropriate URL or function
+        ("Ralphs", "https://www.ralphs.com/savings/cl/coupons"),
+        ("King Soopers", "https://www.kingsoopers.com/savings/cl/coupons"),
+        ("Food 4 Less", "https://www.food4less.com/savings/cl/coupons/"),
+        ("Baker's", "https://www.bakersplus.com/savings/cl/coupons/"),
+        ("City Market", "https://www.citymarket.com/savings/cl/coupons/"),
+        ("Dillons", "https://www.dillons.com/savings/cl/coupons/"),
+        ("Foods Co", "https://www.foodsco.net/savings/cl/coupons/"),
+        ("Fred Meyer", "https://www.fredmeyer.com/savings/cl/coupons/"),
+        ("Fry\'s", "https://www.frysfood.com/savings/cl/coupons/"),
+        ("Gerbes", "https://www.gerbes.com/savings/cl/coupons/"),
+        ("Jay C Food Store", "https://www.jaycfoods.com/savings/cl/coupons/"),
+        ("Mariano\'s", "https://www.marianos.com/savings/cl/coupons/"),
+        ("Metro Market", "https://www.metromarket.net/savings/cl/coupons/"),
+        ("Pay-Less Super Markets", "https://www.pay-less.com/savings/cl/coupons/"),
+        ("Pick\'n Save", "https://www.picknsave.com/savings/cl/coupons/"),
+        ("QFC", "https://www.qfc.com/savings/cl/coupons/"),
+        ("Smith\'s Food and Drug", "https://www.smithsfoodanddrug.com/savings/cl/coupons/")
 
-    def on_button5_click():
-        window.destroy()
-        wait_for_sign_on("https://www.kingsoopers.com/savings/cl/coupons", "King Soopers")
+        # Add more store names and URLs as needed
+    ]
 
-    def on_button4_click():
-        print("Clicked Ralphs")
-        window.destroy()
-        wait_for_sign_on("https://www.ralphs.com/savings/cl/coupons", "Ralphs")
+    def create_button(text, command):
+        return customtkinter.CTkButton(master=window, text=text, command=command)
 
-    def on_button3_click():
-        print("Clicked Target")
+    def on_store_click(url, name):
         window.destroy()
-        scroll_target()
+        if url:
+            wait_for_sign_on(url, name)
+        elif name == "Target":
+            scroll_target()
+        elif name == "Giant Eagle":
+            GE_wait_for_sign_on()
+        else:
+            # Handle other actions or functions if needed
+            print(f"Clicked {name}")
 
-    def on_button2_click():
-        print("Clicked Giant Eagle")
-        window.destroy()
-        GE_wait_for_sign_on()
-
-    def on_button1_click():
-        print("Clicked Kroger")
-        window.destroy()
-        global store_name
-        wait_for_sign_on("https://www.kroger.com/savings/cl/coupons", "Kroger")
-
-    customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
-    customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
     window = customtkinter.CTk()
-    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14, )
+    customtkinter.set_appearance_mode("dark")
+    customtkinter.set_default_color_theme("blue")
     window.title("Sign on verification")
     window.minsize(400, 200)
     window.maxsize(1000, 1000)
-    window.geometry("400x300")
+    window.geometry("500x300")
 
-    text = customtkinter.CTkLabel(master=window, text="Select the store that you would like to clip coupons from.",
-                                  font=custom_font)
+    custom_font = customtkinter.CTkFont(family="<Ariel>", size=14)
+
+    text = customtkinter.CTkLabel(master=window, text="Select the store to clip coupons from.", font=custom_font)
     text.pack()
 
-    button = customtkinter.CTkButton(master=window, text="Kroger", command=on_button1_click)
-    button2 = customtkinter.CTkButton(master=window, text="Giant Eagle", command=on_button2_click)
-    button3 = customtkinter.CTkButton(master=window, text="Target", command=on_button3_click)
-    button4 = customtkinter.CTkButton(master=window, text="Ralphs", command=on_button4_click)
-    button5 = customtkinter.CTkButton(master=window, text="King Soopers", command=on_button5_click)
-    button6 = customtkinter.CTkButton(master=window, text="Food 4 Less", command=on_button6_click)
-    button.place(relx=0.5,  rely=0.3, anchor=CENTER)
-    button2.place(relx=0.5, rely=0.4, anchor=CENTER)
-    button3.place(relx=0.5, rely=0.5, anchor=CENTER)
-    button4.place(relx=0.5, rely=0.6, anchor=CENTER)
-    button5.place(relx=0.5, rely=0.7, anchor=CENTER)
-    button6.place(relx=0.5, rely=0.8, anchor=CENTER)
+    buttons = []
+    for idx, (name, url) in enumerate(stores, start=1):
+        command = lambda n=name, u=url: on_store_click(u, n)
+        button = create_button(name, command)
+        button.place(relx=(0.15 + (idx - 1) % 3 * 0.3), rely=(0.3 + (idx - 1) // 3 * 0.1), anchor=CENTER)
+        buttons.append(button)
+
     window.mainloop()
 
+# Call the function
 def wait_for_sign_on(store_url, store_name):
     max_retries = 10
     current_retry = 0
