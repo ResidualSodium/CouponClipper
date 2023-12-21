@@ -20,7 +20,7 @@ user = os.getlogin()
 
 ############~~~~~~~ Lists && random settings needed ~~~~~~~############
 
-possible_profile_names = ["Profile 1"]
+possible_profile_names = ["Default", "Default"]
 possible_directories = ["C:\\", "D:\\", "E:\\", "F:\\"]
 
 # list of departments to be used in v1.1 or v1.2
@@ -165,10 +165,9 @@ def store_selection():
         ("Pick\'n Save", "https://www.picknsave.com/savings/cl/coupons/"),
         ("QFC", "https://www.qfc.com/savings/cl/coupons/"),
         ("Smith\'s Food and Drug", "https://www.smithsfoodanddrug.com/savings/cl/coupons/")
-
-        # Add more store names and URLs as needed
     ]
-
+    sorted_stores = sorted(stores, key=lambda x: x[0])
+  
     def create_button(text, command):
         return customtkinter.CTkButton(master=window, text=text, command=command)
 
@@ -198,7 +197,7 @@ def store_selection():
     text.pack()
 
     buttons = []
-    for idx, (name, url) in enumerate(stores, start=1):
+    for idx, (name, url) in enumerate(sorted_stores, start=1):
         command = lambda n=name, u=url: on_store_click(u, n)
         button = create_button(name, command)
         button.place(relx=(0.15 + (idx - 1) % 3 * 0.3), rely=(0.3 + (idx - 1) // 3 * 0.1), anchor=CENTER)
