@@ -6,7 +6,7 @@ Since CouponClipper uses the default Google Chrome profile as the driver when cl
 
 For Giant Eagle and Target, the program uses your defualt browser, it's very likely that if you had signed in previously, you will be able to just move forward. Kroger, on the other hand, has measures in place attempting to mitigate bot traffic. As a reuslt, you will likely need to sign in using your password before clipping coupons on the Kroger website. 
 
-At present moment, Kroger is the only website that has the capabilities of being more target. E.g., You can select specific departments that you would like to clip coupons from. Once your selections have been made, the bot will select the same items you did, and then begin clipping coupons. However, if you choose not to make any selections, the program will default and auto-run without any additional targeting of specific departments, brands, or items wihtin the digital coupon section. 
+At present moment, Kroger is the only website that has the capabilities of being more targeted. E.g., You can select specific departments that you would like to clip coupons from. Once your selections have been made, the bot will select the same items you did, and then begin clipping coupons. However, if you choose not to make any selections, the program will default and auto-run without any additional targeting of specific departments, brands, or items wihtin the digital coupon section. 
 
 Once a store has been selected, Couponclipper navigates to your requested website, ensures that you are logged in, and then navigates to the websites digital coupon page. From there, CouponClipper begins clipping the digital coupons on that page. 
 
