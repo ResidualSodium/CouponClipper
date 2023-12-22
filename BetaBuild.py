@@ -20,7 +20,7 @@ user = os.getlogin()
 
 ############~~~~~~~ Lists && random settings needed ~~~~~~~############
 
-possible_profile_names = ["Profile 1"]
+possible_profile_names = ["default", "Default"]
 possible_directories = ["C:\\", "D:\\", "E:\\", "F:\\"]
 
 # list of departments to be used in v1.1 or v1.2
