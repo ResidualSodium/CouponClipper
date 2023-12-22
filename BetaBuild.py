@@ -230,17 +230,28 @@ def wait_for_sign_on(store_url, store_name):
 
 def scroll(store_name):
     if store_name == "Winn Dixie":
-        winn_dixie_scroll()
-    time.sleep(standard_time)
-    last_height = driver.execute_script("return document.body.scrollHeight")
-    while True:
-        time.sleep(alternate_time)
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(alternate_time)
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            click_coupons()
-        last_height = new_height
+        time.sleep(standard_time)
+        last_height = driver.execute_script("return document.body.scrollHeight")
+        while True:
+            time.sleep(alternate_time)
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(alternate_time)
+            new_height = driver.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
+                driver.execute_script("window.scrollTo(0, 0);")
+                winn_dixie_coupon_click()
+            last_height = new_height
+    else:
+        time.sleep(standard_time)
+        last_height = driver.execute_script("return document.body.scrollHeight")
+        while True:
+            time.sleep(alternate_time)
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(alternate_time)
+            new_height = driver.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
+                click_coupons()
+            last_height = new_height
 
 def click_coupons():
     time.sleep(alternate_time)
@@ -288,9 +299,9 @@ def sign_on(store_name):
     def on_yes_click():
         window.destroy()
         if store_name == "Winn Dixie":
-            winn_dixie_scroll()
+            scroll(store_name)
         else:
-            select_departments()
+            select_departments(store_name)
 
     def on_no_click():
         window.destroy()
@@ -318,7 +329,7 @@ def on_checkbox_click():
     global selected_departments
     selected_departments = [list_of_departments[i] for i, value in enumerate(checkbox_vars) if value.get()]
 
-def select_departments():
+def select_departments(store_name):
     window = customtkinter.CTk()
     custom_font = customtkinter.CTkFont(family="<Ariel>", size=14, )
     window.title("Select Departments")
@@ -346,20 +357,19 @@ def select_departments():
     button_column = 0
     button_columnspan = checkboxes_per_row
     button = customtkinter.CTkButton(window, text="Confirm department selection.",
-                                     command=lambda: [window.destroy(), department_selections()])
+                                     command=lambda: [window.destroy(), department_selections(store_name)])
     button.grid(row=button_row, column=button_column, columnspan=button_columnspan, pady=10)
-
     window.mainloop()
 
-def department_selections():
+def department_selections(store_name):
     print(selected_departments)
     if len(selected_departments) == 0:
         print("Nothing selected")
-        scroll()
+        scroll(store_name)
     else:
-        click_department_selections()
+        click_department_selections(store_name)
 
-def click_department_selections():
+def click_department_selections(store_name):
     print("Clicking selected departments")
     print(selected_departments)
     try:
@@ -379,7 +389,7 @@ def click_department_selections():
                 print(f"We couldn't find that department. Coupons may not exist for it. {e}")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-    scroll()
+    scroll(store_name)
 def clicked_too_many_coupons():
     def on_click():
         window.destroy()
@@ -447,7 +457,6 @@ def click_coupons_target():
         except ElementClickInterceptedException as e:
             print("Too many coupons clipped.")
             clicked_too_many_coupons()
-            breakpoint()
 
             time.sleep(0.1)
         except StaleElementReferenceException:
@@ -686,7 +695,7 @@ def winn_dixie_coupon_click():
 
         if not buttons:
             print("No buttons found with the specified criteria.")
-            breakpoint()
+            clicked_too_many_coupons()
 
         for button in buttons:
             coupon_id = button.get_attribute('id')
@@ -709,21 +718,6 @@ def winn_dixie_coupon_click():
         print("Timed out waiting for elements to be present.")
     except Exception as e:
         print(f"An error occurred: {e}")
-
-############~~~~~~~    Winn Dixie scroll function  ~~~~~~~############
-
-def winn_dixie_scroll():
-    time.sleep(standard_time)
-    last_height = driver.execute_script("return document.body.scrollHeight")
-    while True:
-        time.sleep(alternate_time)
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(alternate_time)
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            driver.execute_script("window.scrollTo(0, 0);")
-            winn_dixie_coupon_click()
-        last_height = new_height
 
 
 store_selection()
