@@ -21,6 +21,7 @@ This project is currently in Beta testing phase.
 # Post Beta implementations to be considered:
 
 • Addition of targeting specific brands/departments for Target
+
 • Other websites/stores that offer digital coupons
 
 # Notice
@@ -33,5 +34,9 @@ Kroger, Giant Eagle, Target, Ralphs, King Soopers, Food 4 Less, Baker's, City Ma
 # Known issues:
 
 • Winn Dixie currently has an issue with coupon clipping for some items. This seems to only impact items that are within 1 day of expiry. These items are not able to even be added manually, and as a result will remain as items that are capable of being clicked. Program will still iterate over the coupons available to be clicked. Items that are incapable of being added end up being unclipped and the program will stop after clicpping all other coupons. 
+
+
 • Kroger sign on: When attempting to sign into Kroger and/or Kroger brand of companies, some users have an issue that does not allow them to sign on. This is likely the result of Kroger's anti-bot detection. To circomvent this, you will need to close the program, open Google Chrome, and log into your Kroger account. Once completed, close Google Chrome and run the program again. 
+
+
 • Zipped file: Windows believes that the zipped file is a Trojan. This is not the case. The Zipped file is a .exe that was created with Pyinstaller, and as a result is being flagged as a potential trojan. I need to find a soulition for this and will make the updates once available. For the time being, you can mark the folder/file as being safe for Windows Defender, or, when receivnig the notice that Windows Defender as detected a virus, you can simply ask Windows Defender to allow the file. You'll also need to run the file as Admin at this time. Again, I'm seeking a solution for this and will update once available. Apologies in advance to anyone who attempts to use prior to a fix being implemented. 
