@@ -20,7 +20,7 @@ user = os.getlogin()
 
 ############~~~~~~~ Lists && random settings needed ~~~~~~~############
 
-possible_profile_names = ["Default", "Default"]
+possible_profile_names = ["Profile 1"]
 possible_directories = ["C:\\", "D:\\", "E:\\", "F:\\"]
 
 # list of departments to be used in v1.1 or v1.2
@@ -29,6 +29,14 @@ list_of_departments = ['Adult Beverage', 'Baby', 'Bakery', 'Baking Goods', 'Beau
                        'Electronics', 'Frozen', 'Garden & Patio', 'General', 'Gift Cards', 'Hardware', 'Health',
                        'Health & Beauty', 'Home Decor', 'Kitchen', 'Meat & Seafood', 'Natural & Organic', 'Other',
                        'Pasta Sauces Grain', 'Personal Care', 'Pet Care', 'Produce', 'Snacks', 'Tobacco']
+
+food_for_less_list_of_departments = ['Adult Beverage', 'Baby', 'Bakery', 'Baking Goods', 'Beauty', 'Beverages',
+                                     'Breakfast', 'Candy', 'Canned & Packaged', 'Cleaning Products',
+                                     'Condiments & Sauces', 'Dairy', 'Deli', 'Electronics', 'Frozen', 'Garden & Patio',
+                                     'General', 'Gift Cards', 'Hardware', 'Health', 'Health & Beauty', 'Home Decor',
+                                     'International', 'Kitchen', 'Meat & Seafood', 'Natural & Organic', 'Other',
+                                     'Pasta Sauces Grain', 'Personal Care', 'Pet Care', 'Produce', 'Snacks', 'Tobacco',
+                                     'Travel & Luggage']
 
 global selected_departments
 selected_departments = []
@@ -101,7 +109,7 @@ find_chrome_profile_dir()
 find_chrome_directory()
 find_chrome_profile()
 
-############~~~~~~~ Global variables for pathing ~~~~~~~############
+############~~~~~~~ Modify pathing for insertion later ~~~~~~~############
 
 modified_chrome_profile_directory = re.sub(r'\\', r'\\\\', chrome_profile_directory)
 modified_chrome_directory = re.sub(r'\\', r'\\\\', str(chrome_directory))
@@ -164,10 +172,12 @@ def store_selection():
         ("Pay-Less Super Markets", "https://www.pay-less.com/savings/cl/coupons/"),
         ("Pick\'n Save", "https://www.picknsave.com/savings/cl/coupons/"),
         ("QFC", "https://www.qfc.com/savings/cl/coupons/"),
-        ("Smith\'s Food and Drug", "https://www.smithsfoodanddrug.com/savings/cl/coupons/")
+        ("Smith\'s Food and Drug", "https://www.smithsfoodanddrug.com/savings/cl/coupons/"),
+        ("Winn Dixie", "https://www.winndixie.com/coupons")
+
+        # Add more store names and URLs as needed
     ]
-    sorted_stores = sorted(stores, key=lambda x: x[0])
-  
+
     def create_button(text, command):
         return customtkinter.CTkButton(master=window, text=text, command=command)
 
@@ -179,6 +189,8 @@ def store_selection():
             scroll_target()
         elif name == "Giant Eagle":
             GE_wait_for_sign_on()
+        elif name == "Winn Dixie":
+            winn_dixie_start()
         else:
             # Handle other actions or functions if needed
             print(f"Clicked {name}")
@@ -197,7 +209,7 @@ def store_selection():
     text.pack()
 
     buttons = []
-    for idx, (name, url) in enumerate(sorted_stores, start=1):
+    for idx, (name, url) in enumerate(stores, start=1):
         command = lambda n=name, u=url: on_store_click(u, n)
         button = create_button(name, command)
         button.place(relx=(0.15 + (idx - 1) % 3 * 0.3), rely=(0.3 + (idx - 1) // 3 * 0.1), anchor=CENTER)
@@ -212,11 +224,13 @@ def wait_for_sign_on(store_url, store_name):
     driver.get(store_url)
     sign_on(store_name)
     time.sleep(3)
-    button_xpath = f"//a[@class='kds-Link kds-Link--s kds-Link--implied p-8 block text-neutral-most-prominent' and text()='Digital Coupons']"
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, button_xpath))).click()
+#    button_xpath = f"//a[@class='kds-Link kds-Link--s kds-Link--implied p-8 block text-neutral-most-prominent' and text()='Digital Coupons']"
+#    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, button_xpath))).click()
 
 
-def scroll():
+def scroll(store_name):
+    if store_name == "Winn Dixie":
+        winn_dixie_scroll()
     time.sleep(standard_time)
     last_height = driver.execute_script("return document.body.scrollHeight")
     while True:
@@ -273,7 +287,10 @@ def not_signed_on(store_name):
 def sign_on(store_name):
     def on_yes_click():
         window.destroy()
-        select_departments()
+        if store_name == "Winn Dixie":
+            winn_dixie_scroll()
+        else:
+            select_departments()
 
     def on_no_click():
         window.destroy()
@@ -639,6 +656,74 @@ def GE_no_coupons_to_clip():
     button2.pack()
 
     window.mainloop()
+
+
+
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~     Winn Dixie Start         ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+############~~~~~~~                              ~~~~~~~############
+
+############~~~~~~~    Winn Dixie sign on check  ~~~~~~~############
+
+winn_dixie_clicked_coupons = set()
+
+def winn_dixie_start(store_name):
+    driver.get("https://www.winndixie.com/coupons")
+    sign_on(store_name)
+
+
+############~~~~~~~    Winn Dixie coupon click  ~~~~~~~############
+
+def winn_dixie_coupon_click():
+    print("Attempting to clip")
+    time.sleep(2)
+
+    try:
+        buttons = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[id^='cpnBtn_']"))
+        )
+
+        if not buttons:
+            print("No buttons found with the specified criteria.")
+            breakpoint()
+
+        for button in buttons:
+            coupon_id = button.get_attribute('id')
+
+            try:
+                button.click()
+                time.sleep(1)
+                print(f"Button with ID {coupon_id} clicked successfully!")
+                winn_dixie_clicked_coupons.add(coupon_id)  # Add clicked coupon to the set
+
+            except Exception as ex:
+                print(f"Exception encountered while clicking the button with ID {coupon_id}: {ex}")
+
+        if coupon_id in winn_dixie_clicked_coupons:
+            print(f"Coupon with ID {coupon_id} has already been attempted.")
+            clicked_too_many_coupons()
+            return  # Exit the function since we've found a clicked coupon
+
+    except TimeoutException:
+        print("Timed out waiting for elements to be present.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+############~~~~~~~    Winn Dixie scroll function  ~~~~~~~############
+
+def winn_dixie_scroll():
+    time.sleep(standard_time)
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while True:
+        time.sleep(alternate_time)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(alternate_time)
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            driver.execute_script("window.scrollTo(0, 0);")
+            winn_dixie_coupon_click()
+        last_height = new_height
 
 
 store_selection()
