@@ -16,6 +16,7 @@ This project is currently in Beta testing phase.
 • python3.8 or greater
 • Selenium webdriver
 • Windows Opperating System
+• customTkinter
 
 # Post Beta implementations to be considered:
 
